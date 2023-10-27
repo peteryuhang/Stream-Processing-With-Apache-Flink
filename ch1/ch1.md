@@ -66,3 +66,33 @@
   - The results computed by the stream processor are only approximate
   - The lambda architecture is hard to set up and maintain
 
+## Steps for running flink on local
+
+1. Need Java installed
+2. Download Flink from [page](https://flink.apache.org/)
+3. Extract the archive file:
+  ```bash
+  $> tar xvfz flink-1.18.0-bin-scala_2.12.tgz
+  ```
+4. Start a local Flink cluster:
+  ```bash
+  >$ cd flink-1.18.0
+  >$ ./bin/start-cluster.sh
+  Starting cluster.
+  Starting standalonesession daemon on host xxxx.
+  Starting taskexecutor daemon on host xxxx.
+  ```
+  Flink Web UI will be available on `localhost:8081`
+5. Dowloading JAR file that include example in this book:
+  ```bash
+  >$ ./bin/flink run -c io.github.streamingwithflink.chapter1.AverageSensorReadings examples-scala.jar
+  Job has been submitted with JobID ee6a99c8e490c57732b14d816432e009
+  ```
+6. In the meantime, can check the `Running job` on dashboard, also the log:
+  ```bash
+  >$ tail -f ./log/flink-<user>-taskexecutor-<n>-<hostname>.out
+  ```
+7. Finally can cancel the job on web UI, and run command below to stop local Flink cluster
+  ```bash
+  >$ ./bin/stop-cluster.sh
+  ```
