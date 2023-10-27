@@ -55,3 +55,14 @@
   - Analyzing user behavior in mobile applications
   - Ad-hoc analysis of live data in consumer technology
 
+## A Bit of History
+
+- The lambda architecture augments the traditional periodic batch processing architecture with a speed layer that is powered by a low-latency stream processor
+
+![](./lambda_arch.png)
+
+- Few notable drawbacks:
+  - Requires two semantically equivalent implementations of the application logic for two separate processing systems with different APIs
+  - The results computed by the stream processor are only approximate
+  - The lambda architecture is hard to set up and maintain
+
