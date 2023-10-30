@@ -10,3 +10,6 @@
   - **Random strategy**: uniformly distributes data items to operator tasks in order to evenly distribute the load across computing tasks.
 
 ![](./exchange_strategies.png)
+
+## Processing Streams in Parallel
+
