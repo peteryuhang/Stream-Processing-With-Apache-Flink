@@ -24,4 +24,34 @@
 
 #### Transformation Operations
 
-- 
+- These operations consume one event after the other and apply some transformation to the event data, producing a new output stream
+- The transformation logic can be either integrated in the operator or provided by a user-defined function
+- Operators can accept multiple inputs and produce multiple output streams
+- They can also modify the structure of the dataflow graph by either splitting a stream into multiple streams or merging streams into a single flow
+
+#### Rolling Aggregations
+
+- A rolling aggregation is an aggregation, such as sum, minimum, and maximum, that is continuously updated for each input event
+- Aggregation operations are stateful and combine the current state with the incoming event to produce an updated aggregate value
+- The aggregation function must be associative and commutative. Otherwise, the operator would have to store the complete stream history
+
+#### Window Operations
+
+- For some operations which must collect and buffer records to compute their result, eg. join operation, holistic aggregate, median function
+- You need to limit the amount of data these operations maintain
+- Window operations continuously create finite sets of events called buckets from an unbounded event stream and let us perform computations on these finite sets
+- Window policies decide when new buckets are created, which events are assigned to which buckets, and when the contents of a bucket get evaluated
+- Common window types:
+  - **Tumbling**: windows assign events into nonoverlapping buckets of fixed size. When the window border is passed, all the events are sent to an evaluation function for processing
+    - Count-based tumbling windows
+    - Time-based tumbling windows
+  - **Sliding**: windows assign events into overlapping buckets of fixed size
+    - An event might belong to multiple buckets
+    - Define sliding windows by providing their length and their slide
+  - **Session**: sessions are comprised of a series of events happening in adjacent times followed by a period of inactivity, the length of a session is not defined beforehand but depends on the actual data
+    - Session windows group events in sessions based on a session gap value that defines the time of inactivity to consider a session closed
+- In practice, you might want to partition a stream into multiple logical streams and define parallel windows
+  - In parallel windows, each partition applies the window policies independently of other partitions
+- Window operations are closely related to two dominant concepts in stream processing
+  - Time semantics
+  - State management
