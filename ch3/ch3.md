@@ -55,3 +55,20 @@
 - Window operations are closely related to two dominant concepts in stream processing
   - Time semantics
   - State management
+
+## Time Semantics
+
+- Operator semantics should depend on the time when events actually happen and not the time when the application receives the events
+- What really defines the amount of events in one minutes is the time of the data itself
+
+### Processing Time
+
+- The time of the local clock on the machine where the operator processing the stream is being executed
+
+### Event Time
+
+- The time when an event in the stream actually happened, based on the timestamp that is attached to the events of the stream (eg. the event creation time)
+- Event time correctly places events in a window, reflecting the reality of how things happened
+- An event time window computation will yield the same result no matter how fast the stream is processed or when the events arrive at the operator
+- When combined with replayable streams, the determinism of timestamps gives you the ability to fast forward the past
+
