@@ -72,3 +72,12 @@
 - An event time window computation will yield the same result no matter how fast the stream is processed or when the events arrive at the operator
 - When combined with replayable streams, the determinism of timestamps gives you the ability to fast forward the past
 
+### Watermarks
+
+- How do we decide when to trigger an event-time window?
+- A watermark is a global progress metric that indicates the point in time when we are confident that no more delayed events will arrive
+- When an operator receives a watermark with time `T`, it can assume that no further events with timestamp less than `T` will be received
+- **Eager watermarks** -> low latency but provide lower confidence, and we should provide some code to handle late events
+- **Relaxed watermarks** -> high confidence but might unnecessarily increase processing latency
+- Tracking global progress in a distributed system might be problematic in the presence of straggler tasks, it is crucial that the stream processing system provide some mechanism to deal with events that might arrive after the watermark
+
