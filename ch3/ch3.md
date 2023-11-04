@@ -81,3 +81,10 @@
 - **Relaxed watermarks** -> high confidence but might unnecessarily increase processing latency
 - Tracking global progress in a distributed system might be problematic in the presence of straggler tasks, it is crucial that the stream processing system provide some mechanism to deal with events that might arrive after the watermark
 
+
+### Processing Time VS Event Time
+
+- Processing-time windows introduce the lowest latency possible
+- For applications where speed is more important than accuracy, processing time comes in handy
+- Processing time offers low latency but results depend on the speed of processing and are not deterministic
+- Event time guarantees deterministic results and allows you to deal with events that are late or even out of order
