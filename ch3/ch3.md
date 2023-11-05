@@ -88,3 +88,10 @@
 - For applications where speed is more important than accuracy, processing time comes in handy
 - Processing time offers low latency but results depend on the speed of processing and are not deterministic
 - Event time guarantees deterministic results and allows you to deal with events that are late or even out of order
+
+## State and Consistency Models
+
+- Supporting stateful operators comes with a few implementation challenges:
+  - **State management**: Efficiently manage the state and make sure it is protected from concurrent updates
+  - **State partitioning**: Is necessary for parallelization, partition the state by a key and manage the state of each partition independently
+  - **State recovery**: Ensuring that state can be recovered and results will be correct even in the presence of failures
