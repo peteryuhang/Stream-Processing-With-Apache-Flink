@@ -95,3 +95,44 @@
   - **State management**: Efficiently manage the state and make sure it is protected from concurrent updates
   - **State partitioning**: Is necessary for parallelization, partition the state by a key and manage the state of each partition independently
   - **State recovery**: Ensuring that state can be recovered and results will be correct even in the presence of failures
+
+### Task Failures
+
+#### What is a Task Failure?
+
+- Task's precessing steps (A failure can occur during any of these steps):
+  1. Receives the event, storing it in a local buffer
+  2. Possibly updates internal state
+  3. Produces an output record
+- Streaming systems define their behavior in the presence of failures by offering result guarantees
+
+#### Result Guarantees
+
+- "Result guarantees" means the consistency of the internal state of the stream processor instead of consistency of its output
+
+#### At Most Once
+
+- Guarantees processing of each event at most once
+- This is simplest guarantee, basically to do nothing to recover lost state and replay lost events
+- This type of guarantee is also known as “no guarantee” since even a system that drops every event can provide this guarantee
+
+#### At Least Once
+
+- Guarantees that all events will be processed, and there is a chance that some of them are processed more than once
+  - Duplicate processing might be acceptable if application correctness only depends on the completeness of information (eg. determing whether a specific event occurs in the input stream)
+- In order to ensure at-least-once result correctness, you need to have a way to replay events—either from the source or from some buffer
+  - Persistent event logs
+  - Using record acknowledgments (stores every event in a buffer until its processing has been acknowledged by all tasks in the pipeline, at which point the event can be discarded)
+
+#### Exactly Once
+
+- Guarantees that not only will there be no event loss, but also updates on the internal state will be applied exactly once for each event
+- Providing exactly-once guarantees requires at-least-once guarantees, and thus a data replay mechanism is again necessary
+- After recovery, it should know whether an event update has already been reflected on the state or not
+- Compare with transactional updates, Flink uses a lightweight snapshotting mechanism to achieve exactly-once result guarantees
+
+#### End-To-End Exactly Once
+
+- End-to-end guarantees refer to result correctness across the whole data processing pipeline
+- Each component provides its own guarantees and the end-to-end guarantee of the complete pipeline would be the weakest of each of its components
+- A common case is when a task performs **idempotent operations**, like maximum or minimum. In this case, you can achieve exactly-once semantics with at-least-once guarantees
