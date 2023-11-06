@@ -104,3 +104,28 @@
 - Each of the 4 sender tasks needs at least 4 network buffers to send data to each of the receiver tasks and each receiver task requires at least 4 buffers to receive data
 - Buffers that need to be sent to the other TaskManager are multiplexed over the same network connection
 - With a shuffle or broadcast connection, each sending task needs a buffer for each receiving task; the number of required buffers is quadratic to the number of tasks of the involved operators
+
+#### Credit-Based Flow Control
+
+- A receiving task grants some credit to a sending task, the number of network buffers that are reserved to receive its data
+- Once a sender receives a credit notification, it ships as many buffers as it was granted and the size of its backlog
+- The receiver processes the shipped data with the reserved buffers and uses the sender’s backlog size to prioritize the next credit grants for all its connected senders
+- Credit-based flow control reduces latency because senders can ship data as soon as the receiver has enough resources to accept it
+- it is an effective mechanism to distribute network resources in the case of skewed data distributions because credit is granted based on the size of the senders’ backlog
+
+#### Task Chaining
+
+- In order to satisfy the requirements for task chaining, two or more operators must be configured with the same parallelism and connected by local forward channels
+
+![](./task_chaining1.png)
+
+- How the pipeline is executed with task chaining:
+  - The functions of the operators are fused into a single task that is executed by a single thread
+  - Records that are produced by a function are separately handed over to the next function with a simple method call
+  - No serialization and communication costs for passing records
+
+- Execute a pipeline without chaining:
+
+![](./task_chaining2.png)
+
+- Task chaining is enabled by default in Flink
