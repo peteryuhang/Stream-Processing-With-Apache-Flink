@@ -129,3 +129,28 @@
 ![](./task_chaining2.png)
 
 - Task chaining is enabled by default in Flink
+
+### Event-Time Processing
+
+#### Timestamps
+
+- All records that are processed by a Flink event-time streaming application must be accompanied by a timestamp
+- When Flink processes a data stream in event-time mode, it evaluates time-based operators based on the timestamps of records
+- Flink encodes timestamps as 16-byte Long values and attaches them as metadata to records
+
+#### Watermarks
+
+- In addition to record timestamps, a Flink event-time application must also provide watermarks
+- Time-based operators use this time to trigger computations and make progress
+- Watermarks flow in a stream of regular records with annotated timestamps
+
+![](./timestamp_with_watermarks.png)
+
+- 2 basic properties of watermarks:
+  1. They must be monotonically increasing to ensure the event-time clocks of tasks are progressing and not going backward
+  2. They are related to record timestamps. A watermark with a timestamp `T` indicates that all subsequent records should have timestamps > `T`
+
+- **Late records**: a record that violates the watermark property and has smaller timestamps than a previously received watermark
+- Watermarks allow an application to control result completeness and latency, it comes with trade-off
+  - Very tight watermark result in low processing latency but poor result completeness
+  - Very conservative watermarks increase processing latency but improve result completeness
