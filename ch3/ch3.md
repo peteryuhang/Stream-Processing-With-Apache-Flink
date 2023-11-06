@@ -91,3 +91,16 @@
   3. It restarts the application and resets the state of all its tasks to the last completed checkpoint
 - Flink does not provide tooling to restart failed processes when running in a standalone cluster
   - It can be useful to run standby JobManagers and TaskManagers that can take over the work of failed processes
+
+### Data Transfer in Flink
+
+- The network component of a TaskManager collects records in buffers before they are shipped, i.e., records are not shipped one by one but batched into buffers
+- Shipping records in buffers does imply that Flink’s processing model is based on microbatches
+- Each TaskManager has a pool of network buffers (by default 32 KB in size) to send and receive datas
+- If the sender and receiver tasks run in separate TaskManager processes, they communicate via the network stack of the operating system
+
+![](./data_transfer_between_taskmanager.png)
+
+- Each of the 4 sender tasks needs at least 4 network buffers to send data to each of the receiver tasks and each receiver task requires at least 4 buffers to receive data
+- Buffers that need to be sent to the other TaskManager are multiplexed over the same network connection
+- With a shuffle or broadcast connection, each sending task needs a buffer for each receiving task; the number of required buffers is quadratic to the number of tasks of the involved operators
