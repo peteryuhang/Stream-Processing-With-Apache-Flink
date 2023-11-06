@@ -68,3 +68,26 @@
   - Threads are more lightweight than separate processes and have lower communication costs but do not strictly isolate tasks from each other
   - A single misbehaving task can kill a whole TaskManager process and all tasks that run on it
   - By configuring only a single slot per TaskManager, you can isolate applications across TaskManagers
+
+#### Highly Available Setup
+
+##### TaskManager Failures
+
+- If one of the TaskManagers fails, the JobManager will ask the ResourceManager to provide more processing slots
+- The application’s restart strategy determines how often the JobManager restarts the application and how long it waits between restart attempts
+
+##### JobManager Failures
+
+- Flink supports a high-availability mode that migrates the responsibility and metadata for a job to another JobManager in case the original JobManager disappears
+- Flink’s high-availability mode is based on Apache ZooKeeper
+- When operating in high-availability mode, the JobManager writes the JobGraph and all required metadata, such as the application’s JAR file, into a remote persistent storage system
+- In addition, the JobManager writes a pointer to the storage location into ZooKeeper’s datastore
+
+![](./highly_available_flink_setup.png)
+
+- When a JobManager fails, all tasks that belong to its application are automatically cancelled. A new JobManager that taks over the work and perform steps:
+  1. It requests the storage locations from ZooKeeper to fetch the JobGraph, the JAR file, and the state handles of the last checkpoint of the application from the remote storage
+  2. It requests processing slots from the ResourceManager to continue executing the application
+  3. It restarts the application and resets the state of all its tasks to the last completed checkpoint
+- Flink does not provide tooling to restart failed processes when running in a standalone cluster
+  - It can be useful to run standby JobManagers and TaskManagers that can take over the work of failed processes
