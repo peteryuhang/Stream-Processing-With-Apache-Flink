@@ -32,7 +32,7 @@
     - When instructed by the ResourceManager, the TaskManager offers one or more of its slots to a JobManager
     - The JobManager can then assign tasks to the slots to execute them
     - During execution, a TaskManager exchanges data with other TaskManagers that run tasks of the same application
-  - Dispatcher
+  - **Dispatcher**
     - Serve as an HTTP entry point to clusters that are behind a firewall
     - Runs across job executions and provides a REST interface to submit applications for execution
     - Once an application is submitted for execution, it starts a JobManager and hands the application over
@@ -40,3 +40,15 @@
     - Dispatcher might not be required in some scenarios
 
 ![](./component_interactions.png)
+
+#### Application Deployment
+
+- **Framwork style**
+  - Flink application are packaged into a JAR file and submitted by a client to a running service
+  - If application was submitted to JobManager, it immediately starts to execute the application
+  - If application was submitted to Dispatcher or YARN ResourceManager, it will spin up a JobManager and hand over the application
+  - Traditional approach of submitting an application (or query) via a client to a running service
+- **Libaray style**
+  - Flink application is bundled in an application specific container image
+  - When a container is started from the image, it automatically launches the ResourceManager and JobManager and submits the bundled job for execution
+  - Common for microservices architectures
