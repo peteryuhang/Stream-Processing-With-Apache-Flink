@@ -52,3 +52,19 @@
   - Flink application is bundled in an application specific container image
   - When a container is started from the image, it automatically launches the ResourceManager and JobManager and submits the bundled job for execution
   - Common for microservices architectures
+
+#### Task Execution
+
+- A TaskManager can execute several tasks at the same time
+- These tasks can be subtasks of the same operator (data parallelism), a different operator (task parallelism), or even from a different application (job parallelism)
+- A processing slot can execute one slice of an application—one parallel task of each operator of the application
+
+![](./operator_tasks_and_slots.png)
+
+- One the Figure above:
+  - Left-hand side is the JobGraph (nonparallel representation of an application)
+- TaskManager can efficiently exchange data within the the same process and without accessing the network
+- A TaskManager executes its tasks multithreaded in the same JVM process
+  - Threads are more lightweight than separate processes and have lower communication costs but do not strictly isolate tasks from each other
+  - A single misbehaving task can kill a whole TaskManager process and all tasks that run on it
+  - By configuring only a single slot per TaskManager, you can isolate applications across TaskManagers
