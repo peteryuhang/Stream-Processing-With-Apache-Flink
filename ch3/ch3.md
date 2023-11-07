@@ -154,3 +154,19 @@
 - Watermarks allow an application to control result completeness and latency, it comes with trade-off
   - Very tight watermark result in low processing latency but poor result completeness
   - Very conservative watermarks increase processing latency but improve result completeness
+
+#### Watermark Propagation and Event Time
+
+- Flink implements watermarks as special records that are received and emitted by operator tasks
+- When a task receives a watermark, the following actions take place
+  1. The task updates its internal event-time clock based on the watermark’s timestamp
+  2. The task’s time service identifies all timers with a time smaller than the updated event time. For each expired timer, the task invokes a callback function that can perform a computation and emit records
+  3. The task emits a watermark with the updated event time
+- When tasks receives a watermark from a input partition:
+  1. It updates the respective partition watermark to be the maximum of the received value and the current value
+  2. Updates its event-time clock to be the minimum of all partition watermarks
+  3. If the event-time clock advances, the task processes all triggered timers and finally broadcasts its new event time to all downstream tasks by emitting a corresponding watermark to all connected output partitions
+- This algorithm is relies on the fact that all partitions continuously provide increasing watermarks
+- If any partition have problem, the event-time clock of a task will not advance and the timers of the task will not trigger
+  - A similar effect appears for operators with two input streams whose watermarks significantly diverge, the faster stream are buffered in state until the event-time clock allows processing them
+
