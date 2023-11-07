@@ -220,3 +220,15 @@
   3. **Map state**: Stores a key-value map per key. The key and value of the map can be of arbitrary type
 
 ![](./keyed_state.png)
+
+#### State Backends
+
+- How exactly the state is stored, accessed, and maintained is determined by a pluggable component that is called a **state backend**
+- A state backend is responsible for two things
+  - **local state management**:
+    - State backend stores all keyed states and ensures that all accesses are correctly scoped to the current key
+    - Manage keyed state as objects stored in in-memory data structures on the JVM heap (fast, but limited by the size of the memory)
+    - Another state backend serializes state objects and puts them into RocksDB (slow, but might grow very large)
+  - **checkpointing state to a remote location**:
+    - State backend takes care of checkpointing the state of a task to a remote and persistent storage
+    - State backends differ in how state is checkpointed
