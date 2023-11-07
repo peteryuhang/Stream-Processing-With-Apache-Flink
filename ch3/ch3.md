@@ -184,3 +184,39 @@
     - It can be used to generate watermarks that are encoded in special input records
     - This function can extract a watermark from each record
 - User-defined timestamp assignment functions are usually applied as close to a source operator as possible because it can be very difficult to reason about the order of records and their timestamps after they have been processed by an operator
+
+### State Management
+
+- Flink treats all states—regardless of built-in or user-defined operators—the same
+- All data maintained by a task and used to compute the results of a function belong to the state of the task
+
+![](./stateful_stream_processing_task.png)
+
+- Some challengings (all these are taken care of by Flink):
+  - Handle of very large states, possibly exceeding memory
+  - Ensure that no state is lost in case of failures
+- In Flink, state is always associated with a specific operator
+- In order to make Flink’s runtime aware of the state of an operator, the operator needs to register its state
+
+#### Operator State
+
+- Scoped to an operator task
+- All records processed by the same parallel task have access to the same state
+- Flink offers three primitives for operator state:
+  1. **List state**: Represents state as a list of entries
+  2. **Union list state**: Similar as list state, but will be different during restored time
+  3. **Broadcast state**: Designed for the special case where the state of each task of an operator is identical
+
+![](./operator_state.png)
+
+#### Keyed State
+
+- Keyed state is maintained and accessed with respect to a key defined in the records of an operator’s input stream
+- Flink maintains one state instance per key value and partitions all records with the same key to the operator task that maintains the state for this key
+- In the end, all records with the same key access the same state
+- Flink provides different primitives for keyed state that determine the type of the value stored for each key in this distributed key-value map:
+  1. **Value state**: Stores a single value of arbitrary type per key. Complex data structures can also be stored as value state
+  2. **List state**: Stores a list of values per key. The list entries can be of arbitrary type
+  3. **Map state**: Stores a key-value map per key. The key and value of the map can be of arbitrary type
+
+![](./keyed_state.png)
