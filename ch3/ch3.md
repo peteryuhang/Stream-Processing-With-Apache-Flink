@@ -232,3 +232,25 @@
   - **checkpointing state to a remote location**:
     - State backend takes care of checkpointing the state of a task to a remote and persistent storage
     - State backends differ in how state is checkpointed
+
+#### Scaling Stateful Operators
+
+- Operators with keyed state are scaled by repartitioning keys to fewer or more tasks
+- Flink does not redistribute individual keys, instead, Flink organizes keys in so-called key groups
+
+![](./scaling_an_operator_with_keyed_state.png)
+
+- Operators with operator list state are scaled by redistributing the list entries
+- The list entries of all parallel operator tasks are collected and evenly redistributed to a smaller or larger number of tasks
+
+![](./scaling_an_operator_with_list_state.png)
+
+- Operators with operator union list state are scaled by broadcasting the full list of state entries to each task
+- The task can then choose which entries to use and which to discard
+
+![](./scaling_an_operator_with_union_list_state.png)
+
+- Operators with operator broadcast state are scaled up by copying the state to new tasks
+- This works because broadcasting state ensures that all tasks have the same state
+
+![](./scaling_an_operator_with_broadcast_state.png)
