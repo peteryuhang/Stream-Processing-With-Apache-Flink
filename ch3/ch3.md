@@ -275,3 +275,29 @@
 - An application can only be operated under exactly-once state consistency if all input streams are consumed by resettable data sources (eg. Kafka)
 - Flink’s checkpointing and recovery mechanism only resets the internal state of a streaming application, some result records might be emitted multiple times to downstream systems
   - For some storage systems, Flink provides sink functions that feature exactly-once output, eg. by committing emitted records on checkpoint completion
+
+#### Flink's Checkpointing Algorithm
+
+- Flink implements checkpointing based on the Chandy–Lamport algorithm for distributed snapshots
+- This algorithm use a special type of record called a **checkpoint barrier**
+  - All state modifications due to records that precede a barrier are included in the barrier’s checkpoint
+  - All modifications due to records that follow the barrier are included in a later checkpoint
+- Example for showing the algorithm
+  ![](./checkpoint_algorithm_1.png)
+- A checkpoint is initiated by the JobManager by sending a message with a new checkpoint ID to each data source task
+  ![](./checkpoint_algorithm_2.png)
+- The source task's state backend send the notification to following task once its state checkpoint is complete and acknowledges the checkpoint at the JobManager
+  ![](./checkpoint_algorithm_3.png)
+- When a task receives a barrier for a new checkpoint, it waits for the arrival of barriers from all its input partitions for the checkpoint (**barrier alignment**)
+- While it is waiting, it continues processing records from stream partitions that did not provide a barrier yet
+- Records that arrive on partitions that forwarded a barrier already cannot be processed and are buffered
+  ![](./checkpoint_algorithm_4.png)
+- As soon as a task has received barriers from all its input partitions, it initiates a checkpoint at the state backend and broadcasts the checkpoint barrier to all of its downstream connected tasks
+  ![](./checkpoint_algorithm_5.png)
+- Once all checkpoint barriers have been emitted, the task starts to process the buffered records
+- After all buffered records have been emitted, the task continues processing its input streams
+  ![](./checkpoint_algorithm_6.png)
+- Eventually, the checkpoint barriers arrive at a sink task
+- When a sink task receives a barrier, it performs a barrier alignment, checkpoints its own state, and acknowledges the reception of the barrier to the JobManager
+- The JobManager records the checkpoint of an application as completed once it has received a checkpoint acknowledgement from all tasks of the application
+  ![](./checkpoint_algorithm_7.png)
