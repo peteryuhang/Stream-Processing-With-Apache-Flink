@@ -265,3 +265,13 @@
   2. Wait for all in-flight data to be completely processed, meaning all tasks have processed all their input data
   3. Take a checkpoint by copying the state of each task to a remote, persistent storage. The checkpoint is complete when all tasks have finished their copies
   4. Resume the ingestion of all streams
+
+#### Recovery from a Consistent Checkpoint
+
+- An application is recovered in 3 steps:
+  1. Restart the whole application
+  2. Reset the states of all stateful tasks to the latest checkpoint
+  3. Resume the processing of all task
+- An application can only be operated under exactly-once state consistency if all input streams are consumed by resettable data sources (eg. Kafka)
+- Flink’s checkpointing and recovery mechanism only resets the internal state of a streaming application, some result records might be emitted multiple times to downstream systems
+  - For some storage systems, Flink provides sink functions that feature exactly-once output, eg. by committing emitted records on checkpoint completion
