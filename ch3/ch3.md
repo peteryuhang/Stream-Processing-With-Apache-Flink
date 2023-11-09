@@ -254,3 +254,14 @@
 - This works because broadcasting state ensures that all tasks have the same state
 
 ![](./scaling_an_operator_with_broadcast_state.png)
+
+### Checkpoints, Savepoints, and State Recovery
+
+#### Consistent Checkpoints
+
+- A consistent checkpoint of a stateful streaming application is a copy of the state of each of its tasks at a point when all tasks have processed exactly the same input
+- Steps of naive algorithm (Flink does not implement this mechanism):
+  1. Pause the ingestion of all input streams
+  2. Wait for all in-flight data to be completely processed, meaning all tasks have processed all their input data
+  3. Take a checkpoint by copying the state of each task to a remote, persistent storage. The checkpoint is complete when all tasks have finished their copies
+  4. Resume the ingestion of all streams
