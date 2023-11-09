@@ -301,3 +301,13 @@
 - When a sink task receives a barrier, it performs a barrier alignment, checkpoints its own state, and acknowledges the reception of the barrier to the JobManager
 - The JobManager records the checkpoint of an application as completed once it has received a checkpoint acknowledgement from all tasks of the application
   ![](./checkpoint_algorithm_7.png)
+
+#### Performace Implications of Checkpointing
+
+- Checkpoints can increase the processing latency of an application, Flink implements some tweaks (implemented on the state backend):
+  - **asynchronous checkpoints**: create the local copy, then continues its regular processing, background thread asynchronously copies the local snapshot to the remote storage
+  - **incremental checkpointing** in RocksDB to reduces the amount of data to transfer
+  - Tweak the barrier alignment step:
+    - Flink can be configured to process all arriving records during buffer alignment instead of buffering those for which the barrier has already arrived
+    - Once all barriers for a checkpoint have arrived, the operator checkpoints the state, which might now also include modifications caused by records that would usually belong to the next checkpoint
+    - In case of a failure, these records will be processed again, which means the checkpoint provides at-least-once instead of exactly-once consistency guarantees
