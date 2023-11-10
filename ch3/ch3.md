@@ -311,3 +311,28 @@
     - Flink can be configured to process all arriving records during buffer alignment instead of buffering those for which the barrier has already arrived
     - Once all barriers for a checkpoint have arrived, the operator checkpoints the state, which might now also include modifications caused by records that would usually belong to the next checkpoint
     - In case of a failure, these records will be processed again, which means the checkpoint provides at-least-once instead of exactly-once consistency guarantees
+
+#### Savepoints
+
+- Checkpoints are periodically taken and automatically discarded according to a configurable policy
+- In principle, savepoints are created using the same algorithm as checkpoints and hence are basically checkpoints with some additional metadata
+- Flink does not automatically take a savepoint, so a user (or external scheduler) has to explicitly trigger its creation
+- Flink also does not automatically clean up savepoints
+
+#### Using Savepoints
+
+- Given an application and a compatible savepoint, you can start the application from the savepoint
+- Usage examples:
+  - Start a different but compatible application from a savepoint
+  - Start the same application with a different parallelism and scale the application out or in
+  - Start the same application on a different cluster
+  - Use a savepoint to pause an application and resume it later
+  - You can also just take a savepoint to version and archive the state of an application
+
+#### Starting An Application From A Savepoint
+
+- A typical application consists of multiple states that are distributed across multiple operator tasks that can run on different TaskManager processes
+- When a savepoint is taken, the states of all tasks are copied to a persistent storage location
+- The state copies in the savepoint are organized by an operator identifier and a state name
+![](./savepoint.png)
+- A state in the savepoint can only be mapped to the application if it contains an operator with a corresponding identifier and state name
