@@ -14,3 +14,5 @@ Note of reading book - Stream Processing with Apache Flink
 
 [Ch4. Setting Up a Development Environment for Apache Flink](./ch4/ch4.md)
 
+
+[Ch5. The DataStream API](./ch5/ch5.md)
