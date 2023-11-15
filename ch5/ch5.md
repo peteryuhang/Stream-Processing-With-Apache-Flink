@@ -20,3 +20,16 @@
   - The execution environment offers more configuration options, such as setting the program parallelism and enabling fault tolerance
 - `env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)` to instruct our program to interpret time semantics using event time
 
+#### Read an Input Stream
+
+- Data streams can be ingested from sources such as message queues or files, or also be generated on the fly
+- We create an initial DataStream of type SensorReading:
+  ```java
+  // ingest sensor stream
+  // SensorReading contains the sensor ID, a timestamp denoting when the measurement was taken, and the measured temperature
+  DataStream<SensorReading> sensorData = env
+      // SensorSource generates random temperature readings
+      .addSource(new SensorSource())
+      // assign timestamps and watermarks which are required for event time
+      .assignTimestampsAndWatermarks(new SensorTimeAssigner());
+  ```
