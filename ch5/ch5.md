@@ -33,3 +33,19 @@
       // assign timestamps and watermarks which are required for event time
       .assignTimestampsAndWatermarks(new SensorTimeAssigner());
   ```
+
+#### Apply Transformations
+
+- The logic of an application is defined by chaining transformations
+
+```java
+DataStream<SensorReading> avgTemp = sensorData
+    // convert Fahrenheit to Celsius using and inlined map function
+    .map(r -> new SensorReading(r.id, r.timestamp, (r.temperature - 32) * (5.0 / 9.0)))
+    // organize stream by sensor
+    .keyBy(r -> r.id)
+    // group readings in 1 second windows
+    .timeWindow(Time.seconds(1))
+    // compute average temperature using a user-defined function
+    .apply(new TemperatureAverager());
+```
