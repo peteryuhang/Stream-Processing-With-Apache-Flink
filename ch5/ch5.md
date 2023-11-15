@@ -49,3 +49,15 @@ DataStream<SensorReading> avgTemp = sensorData
     // compute average temperature using a user-defined function
     .apply(new TemperatureAverager());
 ```
+
+#### Output the Result
+
+- Flink provides a well-maintained collection of stream sinks that can be used to write data to different systems
+- It is also possible to implement your own streaming sinks
+- There are also applications that do not emit results but keep them internally to serve them via Flink’s queryable state feature
+
+#### Execute
+
+- After completely defined, application can be executed by calling `StreamExecutionEnvironment.execute()`
+- Flink programs are executed lazily, only when `execute()` is called does the system trigger the execution of the program
+- The constructed plan is translated into a JobGraph and submitted to a JobManager for execution
