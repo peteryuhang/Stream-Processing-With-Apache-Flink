@@ -86,3 +86,10 @@ DataStream<SensorReading> avgTemp = sensorData
 
 ##### Filter
 
+- The filter transformation drops or forwards events of a stream by evaluating a boolean condition on each input event
+  - A return value of true preserves the input event and forwards it to the output
+  - False results in dropping the event
+- Specified by calling the `DataStream.filter()` method and produces a new `DataStream` of the same type as the input DataStream
+
+![](./filter_transformation.png)
+
