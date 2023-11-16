@@ -100,3 +100,36 @@ DataStream<SensorReading> avgTemp = sensorData
 
 ![](./flatmap_transformation.png)
 
+
+#### KeyedStream Transformations
+
+- All events with the same key access the same state and thus can be processed together
+
+##### KeyBy
+
+- The **keyBy** transformation converts a DataStream into a KeyedStream by specifying a key
+  - All events with the same key are processed by the same task of the subsequent operator
+- Events with different keys can be processed by the same task, but the keyed state of a task’s function is always accessed in the scope of the current event’s key
+
+![](./keyby_transformation.png)
+
+- The `keyBy()` method receives an argument that specifies the key (or keys) to group by and returns a KeyedStream
+
+##### Rolling Aggregations
+
+- Rolling aggregation transformations are applied on a KeyedStream and produce a DataStream of aggregates, such as sum, minimum, and maximum
+- For each incoming event, the operator updates the corresponding aggregate value and emits an event with the updated value
+- DataStream API provides the following rolling aggregation methods:
+  - sum()
+  - min()
+  - max()
+  - minBy()
+  - maxBy()
+- It is not possible to combine multiple rolling aggregation methods—only a single rolling aggregate can be computed at a time
+- The rolling aggregate operator keeps a state for every key that is processed. Since this state is never cleaned up, you should only apply a rolling aggregations operator on a stream with a bounded key domain
+
+##### Reduce
+
+- The reduce transformation is a generalization of the rolling aggregation
+- A reduce transformation does not change the type of the stream
+- Similar as rolling aggregations, only use rolling reduce on bounded key domains
