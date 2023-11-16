@@ -133,3 +133,37 @@ DataStream<SensorReading> avgTemp = sensorData
 - The reduce transformation is a generalization of the rolling aggregation
 - A reduce transformation does not change the type of the stream
 - Similar as rolling aggregations, only use rolling reduce on bounded key domains
+
+#### Multistream Transformations
+
+- Process multiple input streams or emit multiple output streams
+
+##### Union
+
+- `DataStream.union()` method merges two or more DataStreams of the same type and produces a new DataStream of the same type
+- The events are merged in a FIFO fashion—the operator does not produce a specific order of events
+- The union operator does not perform duplication elimination. Every input event is emitted to the next operator
+
+![](./union_transformation.png)
+
+##### Connect, CoMap, And CoFlatMap
+
+- `DataStream.connect()` method receives a DataStream and returns a **ConnectedStreams** object, which represents the two connected streams
+- The ConnectedStreams object provides `map()` and `flatMap()` methods that expect a **CoMapFunction** and **CoFlatMapFunction** as argument respectively
+```scala
+// IN1: the type of the first input stream
+// IN2: the type of the second input stream
+// OUT: the type of the output elements
+CoMapFunction[IN1, IN2, OUT]
+    > map1(IN1): OUT
+    > map2(IN2): OUT
+// IN1: the type of the first input stream
+// IN2: the type of the second input stream
+// OUT: the type of the output elements
+CoFlatMapFunction[IN1, IN2, OUT]
+    > flatMap1(IN1, Collector[OUT]): Unit
+    > flatMap2(IN2, Collector[OUT]): Unit
+```
+
+- It is not possible to control the order in which the methods of a CoMapFunction or CoFlatMapFunction are called. Instead, a method is called as soon as an event has arrived via the corresponding input
+- In order to achieve deterministic transformations, on ConnectedStreams, `connect()` can be combined with `keyBy()` or `broadcast()`
