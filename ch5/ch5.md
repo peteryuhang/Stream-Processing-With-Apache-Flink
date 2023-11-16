@@ -61,3 +61,28 @@ DataStream<SensorReading> avgTemp = sensorData
 - After completely defined, application can be executed by calling `StreamExecutionEnvironment.execute()`
 - Flink programs are executed lazily, only when `execute()` is called does the system trigger the execution of the program
 - The constructed plan is translated into a JobGraph and submitted to a JobManager for execution
+
+### Transformations
+
+- Transformations of the DataStream API in 4 categories
+  1. Basic transformations are transformations on individual events
+  2. KeyedStream transformations are transformations that are applied to events in the context of a key
+  3. Multistream transformations merge multiplestreams in to one stream or split one stream into multiple streams
+  4. Distribution transformations reorganize stream events
+
+#### Basic Transformations
+
+- Basic transformations process individual events, meaning that each output record was produced from a single input record, eg.
+  - Simple value conversions
+  - Splitting of records
+  - Filtering of records
+
+##### Map
+
+- Specified by calling the `DataStream.map()` method and produces a new `DataStream`
+- It passes each incoming event to a user-defined mapper that returns exactly one output event, possibly of a different type
+
+![](./map_transformation.png)
+
+##### Filter
+
