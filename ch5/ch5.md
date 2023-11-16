@@ -93,3 +93,10 @@ DataStream<SensorReading> avgTemp = sensorData
 
 ![](./filter_transformation.png)
 
+##### FlatMap
+
+- Similar to map, but it can produce zero, one, or more output events for each incoming event
+- The flatMap transformation is a generalization of filter and map and can be used to implement both those operations
+
+![](./flatmap_transformation.png)
+
