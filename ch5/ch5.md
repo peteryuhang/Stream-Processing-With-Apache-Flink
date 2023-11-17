@@ -167,3 +167,17 @@ CoFlatMapFunction[IN1, IN2, OUT]
 
 - It is not possible to control the order in which the methods of a CoMapFunction or CoFlatMapFunction are called. Instead, a method is called as soon as an event has arrived via the corresponding input
 - In order to achieve deterministic transformations, on ConnectedStreams, `connect()` can be combined with `keyBy()` or `broadcast()`
+
+##### Split And Select
+
+- Split is the inverse transformation to the union transformation
+- It divides an input stream into two or more output streams of the same type as the input stream
+- Split can also be used to filter or replicate events
+
+![](./split_transformation.png)
+
+- `DataStream.split()` method receives an `OutputSelector` that defines how stream elements are assigned to named outputs
+- `OutputSelector` defines the `select()` method that is called for each input event and returns a `java.lang.Iterable[String]`
+  - The String values that are returned for a record specify the output streams to which the record is routed
+- `DataStream.split()` method returns a `SplitStream`, which provides a `select()` method to select one or more streams from the `SplitStream` by specifying the output names
+- One restriction of the split transformation is that all outgoing streams are of the same type as the input type
