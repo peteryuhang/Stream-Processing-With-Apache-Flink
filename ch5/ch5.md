@@ -181,3 +181,27 @@ CoFlatMapFunction[IN1, IN2, OUT]
   - The String values that are returned for a record specify the output streams to which the record is routed
 - `DataStream.split()` method returns a `SplitStream`, which provides a `select()` method to select one or more streams from the `SplitStream` by specifying the output names
 - One restriction of the split transformation is that all outgoing streams are of the same type as the input type
+
+
+#### Distribution Transformations
+
+- `DataStream` methods that enable users to control partitioning strategies or define their own
+
+- **Random**:
+  - Distributes records randomly according to a uniform distribution to the parallel tasks of the following operator
+  - Implemented by the `DataStream.shuffle()` method
+- **Round-Robin**:
+  - Records are evenly distributed to successor tasks in a round-robin fashion
+  - Implemented by the `rebalance()` method, and will create communication channels between all sending tasks to all receiving tasks
+- **Rescale**:
+  - Also distributes events in a round-robin fashion, but only to a subset of successor tasks
+  - Implemented by the `rescale()` method, will only create channels from each task to some of the tasks of the downstream operator
+  - Offers a way to perform a lightweight load rebalance when the number of sender and receiver tasks is not the same
+- **Broadcast**:
+  - Implemented by `broadcast()` method, replicaates the input data stream so that all events are sent to all parallel tasks of the downstream operator
+- **Global**:
+  - Sends all events of the input data stream to the first parallel task of the downstream operator
+  - Implemented by `global()` but must be used with care
+- **Custom**:
+  - You can define your own partitioning strategies by using the `partitionCustom()` method
+    - The method receives a `Partitioner` object that implements the partitioning logic
