@@ -16,3 +16,6 @@ Note of reading book - Stream Processing with Apache Flink
 
 
 [Ch5. The DataStream API](./ch5/ch5.md)
+
+
+[Ch6. Time-Based and Window Operators](./ch6/ch6.md)

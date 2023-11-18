@@ -205,3 +205,6 @@ CoFlatMapFunction[IN1, IN2, OUT]
 - **Custom**:
   - You can define your own partitioning strategies by using the `partitionCustom()` method
     - The method receives a `Partitioner` object that implements the partitioning logic
+  
+#### Setting the Parallelism
+
