@@ -313,5 +313,30 @@ val keyed2 = input.keyBy(1, 2)
 
 ### Implementing Functions
 
+#### Function Classes
+
+- A function is implemented by implementing the interface or extending the abstract class
+- When a program is submitted for execution, all function objects are serialized using Java serialization and shipped to all parallel tasks of their corresponding operators
+- If your function requires a nonserializable object instance, you can either implement it as a rich function and initialize the nonserializable field in the open() method or override the Java serialization and deserialization methods
+
+#### Lambda Functions
+
+- Lambda functions are available for Scala and Java and offer a simple and concise way to implement application logic when no advanced operations such as accessing state and configuration are required
+
+#### Rich Functions
+
+- There is a need to initialize a function before it processes the first record or to retrieve information about the context in which it is executed
+- Rich functions can be parameterized just like regular function classes
+- The name of a rich function starts with Rich followed by the transformation name — `RichMapFunction`, `RichFlatMapFunction`
+- When using a rich function, you can implement two additional methods to the function’s lifecycle:
+  - `open()`: Initialization method for the rich function. Called once per task before a transformation method like filter or map is called
+    - Typically used for setup work that needs to be done only once
+  - `close()`: fFinalization method for the function and it is called once per task after the last call of the transformation method
+    - Commonly used for cleanup and releasing resources
+- `getRuntimeContext()` provides access to the function's **RuntimeContext**. The **RuntimeContext** can be used to retrieve information such as:
+  - Function's parallelism
+  - Subtask index
+  - Name of the task that executes the function
+
 ### Inclding External and Flink Dependencies
 
