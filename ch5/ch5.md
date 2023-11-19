@@ -337,6 +337,14 @@ val keyed2 = input.keyBy(1, 2)
   - Function's parallelism
   - Subtask index
   - Name of the task that executes the function
+  - Partitioned state
 
 ### Inclding External and Flink Dependencies
 
+- By default, only the core API dependencies (DataStream and DataSet APIs) are loaded by a Flink cluster
+- All other dependencies an application requires must be explicitly provided
+- 2 ways to ensure all dependencies are available to an application when it is executed:
+   - Bundle all dependencies into the application JAR file
+   - The JAR file of a dependency can be added to the `./lib` folder of a Flink setup
+- Building a so-called fat JAR file is the preferred way to handle application dependencies
+- The `pom.xml` file of a generated Maven project contains comments that explain how to add additional dependencies
