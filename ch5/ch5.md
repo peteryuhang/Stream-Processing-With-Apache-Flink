@@ -225,7 +225,7 @@ CoFlatMapFunction[IN1, IN2, OUT]
   - All Java and Scala primitive types, such as Integer, String, and Double in Java
 - Java and Scala tuples
   - Flink’s Java tuples can have up to 25 fields, with each length is implemented as a separate class—Tuple1, Tuple2, up to Tuple25
-  - Tuple fields can be accessed by the name of their public fields —f0, f1, f2, or by position using the getField(int pos) method
+  - Tuple fields can be accessed by the name of their public fields —f0, f1, f2, or by position using the `getField(int pos)` method
   - The tuple classes are strongly typed
   - Flink’s Java tuples are mutable, so the values of fields can be reassigned
   ```java
@@ -256,6 +256,20 @@ CoFlatMapFunction[IN1, IN2, OUT]
   - eg. Java’s ArrayList, HashMap, and Enum types, Hadoop Writable types
 - Types that are not specially handled are treated as generic types and serialized using the **Kryo serialization framework**
   - Only use Kryo as a fallback solution since it might not very efficient, and it doesn't provide a good migration path to evolve data types
+
+#### Creating Type Information for Data Types
+
+- The central class in Flink’s type system is **TypeInformation**
+- Flink provides two utility classes for Java with static methods to generate a **TypeInformation**
+  - The helper class is **org.apache.flink.api.common.typeinfo.Types**:
+  ```java
+  // TypeInformation for primitive types
+  TypeInformation<Integer> intType = Types.INT;
+  // TypeInformation for Java Tuples
+  TypeInformation<Tuple2<Long, String>> tupleType = Types.TUPLE(Types.LONG, Types.STRING);
+  // TypeInformation for POJOs
+  TypeInformation<Person> personType = Types.POJO(Person.class);
+  ```
 
 
 ### Defining Keys and Referencing Fields
