@@ -287,6 +287,30 @@ CoFlatMapFunction[IN1, IN2, OUT]
 
 ### Defining Keys and Referencing Fields
 
+- In Flink, keys are defined as functions over the input data, it is not necessary to define data types to hold keys and values, which avoids a lot of boilerplate code
+
+#### Field Positions
+
+- If the data type is a tuple, keys can be defined by simply using the field position of the corresponding tuple element
+```scala
+val input: DataStream[(Int, String, Long)] = ...
+val keyed = input.keyBy(1)
+```
+
+- Composite keys consisting of more than one tuple field can also be defined. In this case, the positions are provided as a list, one after the other
+```scala
+val keyed2 = input.keyBy(1, 2)
+```
+
+#### Field Expressions
+
+- Define keys and select fields is by using String- based field expressions
+
+#### Key Selectors
+
+- A KeySelector function extracts a key from an input event
+- An advantage of KeySelector functions is that the resulting key is strongly typed due to the generic types of the KeySelector class
+
 ### Implementing Functions
 
 ### Inclding External and Flink Dependencies
