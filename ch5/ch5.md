@@ -271,6 +271,19 @@ CoFlatMapFunction[IN1, IN2, OUT]
   TypeInformation<Person> personType = Types.POJO(Person.class);
   ```
 
+#### Explicitly Providing Type Information
+
+- In most cases, Flink can automatically infer types and generate the correct TypeInformation but sometimes the necessary information cannot be extracted, we might need to explicitly provide TypeInformation objects to Flink for some of the data types used in your application
+- 2 ways to provide TypeInformation:
+  - Extend a function class to explicitly provide the TypeInformation of its return type by implementing the **ResultTypeQueryable** interface
+  - In Java API, can use the `returns()` method to explicitly specify
+  ```java
+  DataStream<Tuple2<String, Integer>> tuples = ...
+  DataStream<Person> persons = tuples
+    .map(t -> new Person(t.f0, t.f1))
+    // provide TypeInformation for the map lambda function's return type
+    .returns(Types.POJO(Person.class));
+  ```
 
 ### Defining Keys and Referencing Fields
 
