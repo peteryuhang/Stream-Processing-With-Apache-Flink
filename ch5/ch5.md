@@ -208,3 +208,8 @@ CoFlatMapFunction[IN1, IN2, OUT]
   
 #### Setting the Parallelism
 
+- The number of parallel tasks of an operator is called the parallelism of the operator
+- The parallelism of an operator can be controlled at the level of the execution environment or per individual operator
+- By default, the parallelism of all operators of an application is set as the parallelism of the application’s execution environment
+  - If the application runs in a local execution environment the parallelism is set to match the number of CPU cores
+  - On Flink cluster, the environment parallelism is set to the default parallelism of the cluster unless it is explicitly specified via the submission client
