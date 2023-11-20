@@ -27,3 +27,17 @@
 - To ensure that event-time operations behave as expected, the assigner should be called before any event-time dependent transformation
 - Timestamp assigners are called on a stream of elements and produce a new stream of timestamped elements and watermarks
 - Timestamp assigners do not change the data type of a DataStream
+
+#### Assigner With Periodic Watermarks
+
+- Instruct the system to emit watermarks and advance the event time in fixed intervals of machine time
+- Default interval is set to two hundred milliseconds, but it can be configured using the `ExecutionConfig.setAutoWatermarkInterval()`
+- If your input elements have timestamps that are monotonically increasing, you can use the shortcut method `assignAscendingTimeStamps`
+- When you know the maximum lateness that you will encounter in the input stream, can use `BoundedOutOfOrdernessTimeStampExtractor`
+
+#### Assigner With Punctuated Watermarks
+
+- Flink provides the `AssignerWithPunctuatedWatermarks` interface for watermarks can be defined based on some other property of the input elements
+  - It defines the `checkAndGetNextWatermark()` method, which is called for each event right after `extractTimestamp()`
+  - `checkAndGetNextWatermark()` can decide to generate a new watermark or not
+  - A new watermark is emitted if the method returns a nonnull watermark that is larger than the latest emitted watermark
