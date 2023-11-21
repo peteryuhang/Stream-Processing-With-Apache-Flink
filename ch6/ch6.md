@@ -48,3 +48,25 @@
 - Watermarks control how long to wait for data to arrive before performing a computation
 - The reality is that we can never have perfect watermarks because that would mean we are always certain there are no delayed records
 - The latency/completeness tradeoff is a fundamental characteristic of stream processing applications
+
+### Process Functions
+
+- Process functions can access record timestamps and watermarks and register timers that trigger at a specific time in the future
+- Process functions are commonly used to build event-driven applications and to implement custom logic for which predefined windows and transformations might not be suitable
+- Flink provides eight different process functions:
+  - **ProcessFunction**
+  - **KeyedProcessFunction**
+  - **CoProcessFunction**
+  - **ProcessJoinFunction**
+  - **BroadcastProcessFunction**
+  - **KeyedBroadcastProcessFunction**
+  - **ProcessWindowFunction**
+  - **ProcessAllWindowFunction**
+- All process functions implement the RichFunction interface and hence offer `open()`, `close()`, and `getRuntimeContext()` methods
+- **KeyedProcessFunction** provides the following 2 methods:
+  - `processElement()`
+    - Called for each record of the stream
+  - `onTimer()`
+    - Callback function that is invoked when a previously registered timer triggers
+
+#### 
