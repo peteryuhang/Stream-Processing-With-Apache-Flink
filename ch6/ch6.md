@@ -69,4 +69,14 @@
   - `onTimer()`
     - Callback function that is invoked when a previously registered timer triggers
 
-#### 
+#### TimerService and Timers
+
+- The TimerService of the Context and OnTimerContext objects offers the following methods
+  - `currentProcessingTime()`: returns the current processing time
+  - `currentWatermark()`: returns the timestamp of the current watermark
+  - `registerProcessingTimeTimer()`: registers a processing time timer for the current key
+  - `registerEventTimeTimer()`: registers an event-time timer for the current key. The timer will fire when the watermark is updated to a timestamp that is equal to or larger than the timer’s timestamp
+  - `deleteProcessingTimeTimer()`: deletes a processing-time timer that was previously registered for the current key
+  - `deleteEventTimeTimer()`: deletes an event-time timer that was previously registered for the current key
+- When a timer fires, the onTimer() callback function is called
+- Timers can only be registered on keyed streams
