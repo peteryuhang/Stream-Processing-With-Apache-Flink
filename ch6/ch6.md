@@ -80,3 +80,12 @@
   - `deleteEventTimeTimer()`: deletes an event-time timer that was previously registered for the current key
 - When a timer fires, the onTimer() callback function is called
 - Timers can only be registered on keyed streams
+
+#### Emitting to Side Outputs
+
+- Side outputs are a feature of process functions to emit multiple streams from a function with possibly different types
+- Process functions can emit a record to one or more side outputs via the Context object
+
+#### CoProcessFunction
+
+- A CoProcessFunction offers a transformation method for each input
