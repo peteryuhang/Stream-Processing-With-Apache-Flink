@@ -89,3 +89,14 @@
 #### CoProcessFunction
 
 - A CoProcessFunction offers a transformation method for each input
+
+### Window Operators
+
+- Windows enable transformations such as aggregations on bounded intervals of an unbounded stream
+
+#### Defining Window Operators
+
+- Window operators on keyed windows are evaluated in parallel, and nonkeyed windows are processed in a single thread
+- To create a window operator, you need to specify two window components:
+  - A **window assigner** that determines how the elements of the input stream are grouped into windows. It produces a WindowedStream (or AllWindowedStream if applied on a nonkeyed DataStream)
+  - A **window function** that is applied on a WindowedStream (or AllWindowedStream) and processes the elements that are assigned to a window
