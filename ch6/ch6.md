@@ -151,3 +151,31 @@
   - **Full window functions**:
     - Collect all elements of a window and iterate over the list of all collected elements when they are evaluated
     - `ProcessWindowFunction`
+
+##### Reduce Function
+
+- When a new element is received, the `ReduceFunction` is called with the new element and the current value that is read from the window’s state
+- The window’s state is replaced by the ReduceFunction’s result
+- The input and output type must be the same
+
+##### Aggregate Function
+
+- Similar to `ReduceFunction`, but `AggregateFunction` is much more flexible
+- Interface of the `AggregateFunction`:
+  ```scala
+  public interface AggregateFunction<IN, ACC, OUT> extends Function, Serializable {
+    // create a new accumulator to start a new aggregate.
+    ACC createAccumulator();
+
+    // add an input element to the accumulator and return the accumulator.
+    ACC add(IN value, ACC accumulator);
+
+    // compute the result from the accumulator and return it.
+    OUT getResult(ACC accumulator);
+
+    // merge two accumulators and return the result.
+    ACC merge(ACC a, ACC b);
+  }
+  ```
+- In contrast to the `ReduceFunction`, the intermediate data type and the output type do not depend on the input type
+
