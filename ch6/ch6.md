@@ -111,3 +111,15 @@
 - Flink’s built-in window assigners create windows of type **TimeWindow**
   - This window type essentially represents a time interval between the two timestamps, where start is inclusive and end is exclusive
   - It exposes methods to retrieve the window boundaries, to check whether windows intersect, and to merge overlapping windows
+
+##### Tumbling Windows
+
+- A tumbling window assigner places elements into nonoverlapping, fixed-size windows
+
+![](./tumbling_window.png)
+
+- The DataStream API provide 2 tumbling window assigner
+  - `TumblingEventTimeWindows`
+  - `TumblingProcessingTimeWindows`
+
+- A tumbling window assigner receives one parameter, the window size in time units; this can bespecified using the `of(Time size)` method of the assigner
