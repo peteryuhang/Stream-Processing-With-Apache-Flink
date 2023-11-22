@@ -100,3 +100,14 @@
 - To create a window operator, you need to specify two window components:
   - A **window assigner** that determines how the elements of the input stream are grouped into windows. It produces a WindowedStream (or AllWindowedStream if applied on a nonkeyed DataStream)
   - A **window function** that is applied on a WindowedStream (or AllWindowedStream) and processes the elements that are assigned to a window
+
+
+#### Built-in Window Assigners
+
+- Time-based window assigners assign an element based on its event-time timestamp or the current processing time to windows
+- Time windows have a start and an end timestamp
+- All built-in window assigners provide a default trigger that triggers the evaluation of a window once the (processing or event) time passes the end of the window
+- It is important to note that a window is created when the first element is assigned to it. Flink will never evaluate empty windows
+- Flink’s built-in window assigners create windows of type **TimeWindow**
+  - This window type essentially represents a time interval between the two timestamps, where start is inclusive and end is exclusive
+  - It exposes methods to retrieve the window boundaries, to check whether windows intersect, and to merge overlapping windows
