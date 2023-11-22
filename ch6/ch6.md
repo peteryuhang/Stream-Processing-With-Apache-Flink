@@ -123,3 +123,13 @@
   - `TumblingProcessingTimeWindows`
 
 - A tumbling window assigner receives one parameter, the window size in time units; this can bespecified using the `of(Time size)` method of the assigner
+
+##### Sliding Windows
+
+- The sliding window assigner assigns elements to fixed-sized windows that are shifted by a specified slide interval
+
+![](./sliding_window.png)
+
+- For a sliding window, you have to specify a window size and a slide interval that defines how frequently a new window is started
+  - When the slide interval is smaller than the window size, the windows overlap and elements can be assigned to more than one window
+  - If the slide is larger than the window size, some elements might not be assigned to any window and hence may be dropped
