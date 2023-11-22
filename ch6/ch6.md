@@ -133,3 +133,21 @@
 - For a sliding window, you have to specify a window size and a slide interval that defines how frequently a new window is started
   - When the slide interval is smaller than the window size, the windows overlap and elements can be assigned to more than one window
   - If the slide is larger than the window size, some elements might not be assigned to any window and hence may be dropped
+
+##### Session Windows
+
+- A session window assigner places elements into nonoverlapping windows of activity of varying size
+- The boundaries of session windows are defined by gaps of inactivity, time intervals in which no record is received
+
+![](./session_window.png)
+
+#### Applying Functions on Windows
+
+- Window functions define the computation that is performed on the element of a window
+- There are 2 types of functions that can be applied on a window:
+  - **Incremental aggregation functions**:
+    - Hold and update a single value as window state, and eventually emit the aggregated value as a result
+    - eg. `ReduceFunction`, `AggregateFunction`
+  - **Full window functions**:
+    - Collect all elements of a window and iterate over the list of all collected elements when they are evaluated
+    - `ProcessWindowFunction`
