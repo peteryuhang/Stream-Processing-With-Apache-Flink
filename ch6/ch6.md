@@ -179,3 +179,31 @@
   ```
 - In contrast to the `ReduceFunction`, the intermediate data type and the output type do not depend on the input type
 
+##### Process Window Function
+
+- Perform arbitrary computations on the contents of a window
+- Interface of the `ProcessWindowFunction`:
+  ```scala
+  public abstract class ProcessWindowFunction<IN, OUT, KEY, W extends Window> extends AbstractRichFunction {
+    // Evaluates the window
+    void process(KEY key, Context ctx, Iterable<IN> vals, Collector<OUT> out) throws Exception;
+    // Deletes any custom per-window state when the window is purged
+    public void clear(Context ctx) throws Exception {}
+    // The context holding window metadata
+    public abstract class Context implements Serializable {
+      // Returns the metadata of the window
+      public abstract W window();
+      // Returns the current processing time
+      public abstract long currentProcessingTime();
+      // Returns the current event-time watermark
+      public abstract long currentWatermark();
+      // State accessor for per-window state
+      public abstract KeyedStateStore windowState();
+      // State accessor for per-key global state
+      public abstract KeyedStateStore globalState();
+      // Emits a record to the side output identified by the OutputTag.
+      public abstract <X> void output(OutputTag<X> outputTag, X value);
+    }
+  }
+  ```
+
