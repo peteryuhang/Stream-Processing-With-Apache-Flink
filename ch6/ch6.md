@@ -207,3 +207,23 @@
   }
   ```
 
+##### Incremental Aggregation And Process Window Function
+
+- If you have incremental aggregation logic but also need access to window metadata, you can combine a ReduceFunction or AggregateFunction, which perform incremental aggregation, with a ProcessWindowFunction, which provides access to more functionality
+- eg.
+  ```scala
+  input
+    .keyBy(...)
+    .timeWindow(...)
+    .reduce(
+      incrAggregator: ReduceFunction[IN],
+      function: ProcessWindowFunction[IN, OUT, K, W])
+
+  input
+    .keyBy(...)
+    .timeWindow(...)
+    .aggregate(
+      incrAggregator: AggregateFunction[IN, ACC, V],
+      windowFunction: ProcessWindowFunction[V, OUT, K, W])
+  ```
+
