@@ -258,3 +258,9 @@ stream
     - Trigger must clear all of its state in the Trigger.clear() method to prevent leaking state
 - The window operator deletes a window when the end time of the window, defined by the end timestamp of the window object, is reached
 
+##### Window Assigners
+
+- The WindowAssigner determines for each arriving element to which windows it is assigned
+- In addition to the `WindowAssigner` interface there is also the `MergingWindowAssigner` interface that extends WindowAssigner
+  - The `MergingWindowAssigner` is used for window operators that need to merge existing windows
+  - When merging windows, you need to ensure that the state of all merging windows and their triggers is also appropriately merged
