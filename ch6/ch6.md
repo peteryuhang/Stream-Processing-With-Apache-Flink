@@ -264,3 +264,28 @@ stream
 - In addition to the `WindowAssigner` interface there is also the `MergingWindowAssigner` interface that extends WindowAssigner
   - The `MergingWindowAssigner` is used for window operators that need to merge existing windows
   - When merging windows, you need to ensure that the state of all merging windows and their triggers is also appropriately merged
+
+##### Triggers
+
+- Triggers define when a window is evaluated and its results are emitted
+- The default triggers of the previously discussed time windows fire when the processing time or the watermark exceed the timestamp of the window’s end boundary
+- Every time a trigger is called it produces a **TriggerResult** that determines what should happen to the window, **TriggerResult** can take one of the following values:
+  - **Continue**: No action is taken
+  - **Fire**:
+    - If the window operator has a ProcessWindowFunction, the function is called and the result is emitted
+    - If the window only has an incremetal aggregation function (ReduceFunction or AggregateFunction) the current aggregation result is emitted
+  - **Purge**:
+    - The content of the window is completely discarded and the window including all metadata is removed
+    - `ProcessWindowFunction.clear()` method is invoked to clean up all custom per-window state
+  - **Fire_AND_PURGE**:
+    - Evaluates the window first (FIRE)
+    - Subsequently removes all state and metadata (PURGE)
+- There are two aspects of triggers that require special care: cleaning up state and merging triggers
+  - When using per-window state in a trigger, you need to ensure that this state is properly deleted when the window is deleted
+  - `canMerge()` declares that a trigger supports merging and the `onMerge()` method needs to implement the logic to perform the merge
+
+##### Evictors
+
+- The Evictor is an optional component in Flink’s windowing mechanism
+- It can remove elements from a window before or after the window function is evaluated
+- The `evictBefore()` and `evictAfter()` methods are called before and after a window function is applied on the content of a window, respectively
