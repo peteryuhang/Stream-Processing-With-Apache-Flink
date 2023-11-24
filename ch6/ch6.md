@@ -239,3 +239,22 @@ stream
   [.evictor(...)] evictor        // optional: specify the evictor
   .reduce/aggregate/process(...) // specify the window function
 ```
+
+##### Window Lifecycle
+
+- A window is created when the WindowAssigner assigns the first element to it
+- A window consists of different pieces of state as follows:
+  - **Window Content**:
+    - Elements that have been assigned to the window or the result of the incremental aggregation
+  - **Window Object**:
+    - The window operator groups elements based on the returned objects
+    - A window object holds the information used to distinguish windows from each other
+    - Each window object has an end timestamp that defines the point in time after which the window and its state can be deleted
+  - **Timers of a trigger**:
+    - A trigger can register timers to be called back at certain points in time
+  - **Custom-defined state in a trigger**:
+    - A trigger can define and use custom, per-window and per-key state
+    - This state is completely controlled by the trigger and not maintained by the window operator
+    - Trigger must clear all of its state in the Trigger.clear() method to prevent leaking state
+- The window operator deletes a window when the end time of the window, defined by the end timestamp of the window object, is reached
+
