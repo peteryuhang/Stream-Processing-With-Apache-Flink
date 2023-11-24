@@ -227,3 +227,15 @@
       windowFunction: ProcessWindowFunction[V, OUT, K, W])
   ```
 
+#### Customizing Window Operators
+
+- The DataStream API exposes interfaces and methods to define custom window operators by allowing you to implement your own assigners, triggers, and evictors
+  - assigners -> triggers -> evictor
+```scala
+stream
+  .keyBy(...)
+  .window(...)                   // specify the window assigner
+  [.trigger(...)] trigger        // optional: specify the trigger
+  [.evictor(...)] evictor        // optional: specify the evictor
+  .reduce/aggregate/process(...) // specify the window function
+```
