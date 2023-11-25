@@ -310,3 +310,20 @@ input1
 - For the first input, all records with timestamps larger than the current watermark—the upper bound—are buffered
 - For the second input, all records with timestamps larger than the current watermark + the lower bound are buffered
 - The watermark is determined by the “slower” stream
+
+#### Window Join
+
+- Elements of both input streams are assigned to common windows and joined (or cogrouped) when a window is complete
+
+```scala
+input1.join(input2)
+  .where(...)          // specify key attributes for input1
+  .equalTo(...)        // specify key attributes for input2
+  .window(...)         // specify the WindowAssigner
+  [.trigger(...)]      // optional: specify a Trigger
+  [.evictor(...)]      // optional: specify an Evictor
+  .apply(...)          // specify the JoinFunction
+```
+
+![](./window_join.png)
+
