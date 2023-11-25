@@ -19,3 +19,5 @@ Note of reading book - Stream Processing with Apache Flink
 
 
 [Ch6. Time-Based and Window Operators](./ch6/ch6.md)
+
+[Ch7. Stateful Operators and Applications](./ch7/ch7.md)
