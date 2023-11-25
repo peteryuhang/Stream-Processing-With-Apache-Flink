@@ -327,3 +327,16 @@ input1.join(input2)
 
 ![](./window_join.png)
 
+### Handling Late Data
+
+- A late element is an element that arrives at an operator when a computation to which it would need to contribute has already been performed
+- DataStream API provides different options for how to handle late events:
+  - Late events can be simply dropped
+  - Late events can be redirected into a separate stream
+  - Computation results can be updated based on late events and updates have to be emitted
+
+#### Dropping Late Events
+
+- Dropping late events is the default behavior for event-time window operators
+- A process function can easily filter out late events by comparing their timestamps with the current watermark
+
