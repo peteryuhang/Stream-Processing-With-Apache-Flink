@@ -289,3 +289,24 @@ stream
 - The Evictor is an optional component in Flink’s windowing mechanism
 - It can remove elements from a window before or after the window function is evaluated
 - The `evictBefore()` and `evictAfter()` methods are called before and after a window function is applied on the content of a window, respectively
+
+### Joining Streams on Time
+
+#### Interval Join
+
+- The interval join joins events from two streams that have a common key and that have timestamps not more than specified intervals apart from each other
+
+![](./interval_join.png)
+
+- The interval join currently only supports event time and operates with INNER JOIN semantics(events that have no matching event will not be forwarded)
+
+```scala
+input1
+  .keyBy(...)
+  .between(<lower-bound>, <upper-bound>) // bounds with respect to input1
+  .process(ProcessJoinFunction) // process pairs of matched events
+```
+
+- For the first input, all records with timestamps larger than the current watermark—the upper bound—are buffered
+- For the second input, all records with timestamps larger than the current watermark + the lower bound are buffered
+- The watermark is determined by the “slower” stream
