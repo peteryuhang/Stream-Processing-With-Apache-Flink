@@ -340,3 +340,16 @@ input1.join(input2)
 - Dropping late events is the default behavior for event-time window operators
 - A process function can easily filter out late events by comparing their timestamps with the current watermark
 
+#### Redirecting Late Events
+
+- Late events can also be redirected into another DataStream using the side-output feature
+- Depending on the business requirements, late data can later be integrated into the results of the streaming application with a periodic backfill process
+
+#### Updating Results by Including Late Events
+
+- Since it is typically not possible for an operator to retain all state forever, it needs to purge state at some point
+- When using event-time windows, you can specify an additional time period called **allowed lateness**
+- A window operator with allowed lateness will not delete a window and its state after the watermark passes the window’s end timestamp
+- The operator continues to maintain the complete window for the allowed lateness period
+- When a late element arrives within the allowed lateness period it is handled like an on-time element and handed to the trigger
+- When the watermark passes the window’s end timestamp plus the lateness interval, the window is finally deleted and all subsequent late elements are discarded
