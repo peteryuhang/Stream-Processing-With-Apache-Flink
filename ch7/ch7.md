@@ -74,3 +74,32 @@ env.enableCheckpointing(10000L)
 
 - The maximum parallelism parameter of an operator defines the number of key groups into which the keyed state of the operator is split
 - The maximum parallelism can be set for all operators of an application via the **StreamExecutionEnvironment** or per operator using the `setMaxParallelism()` method
+
+
+### Performance and Robustness of Stateful Applications
+
+#### Choosing a State Backend
+
+- The state backend is responsible for storing the local state of each task instance and persisting it to remote storage when a checkpoint is taken
+- Flink offers 3 state backends:
+  - **MemoryStateBackend**
+    - Stores state as regular objects on the heap of the TaskManager JVM process
+    - MemoryStateBackend is only recommended for development and debugging purposes
+  - **FsStateBackend**
+    - Stores the local state on the TaskManager’s JVM heap
+    - The difference is it writes the state to a remote and persistent file system instead of JobManager's volatile memory
+  - **RocksDBStateBackend**
+    - Stores all state into local RocksDB instances
+    - RocksDB is an embedded key-value store that persists data to the local disk
+    - RocksDBStateBackend is a good choice for applications with very large state
+    - Reading and writing data to disk and the overhead of de/serializing objects result in lower read and write performance compared to maintaining state on the heap
+
+#### Choosing a State Primitive
+
+- For state backends that de/serialize state objects when reading or writing, such as **RocksDBStateBackend**, the choice of the state primitive (ValueState, ListState, or MapState) can have a major impact on the performance of an application
+
+
+#### Preventing Leaking State
+
+- A common reason for growing state is keyed state on an evolving key domain
+- A solution for this problem is to remove the state of expired keys
