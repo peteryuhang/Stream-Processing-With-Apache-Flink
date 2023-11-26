@@ -19,3 +19,31 @@
     - Instead of appending values to a list, `ReducingState.add()` immediately aggregates value using a ReduceFunction
   - `AggregatingState[I, O]` behaves similar to `ReducingState`, but it use more general `AggregateFunction` to aggregate values
   - All state primitives can be cleared by calling `State.clear()`
+
+#### Implementing Operator List State with the ListCheckpointed Interface
+
+- A function can work with operator list state by implementing the **ListCheckpointed** interface
+- The interface provide 2 methods:
+  ```scala
+  // returns a snapshot the state of the function as a list
+  snapshotState(checkpointId: Long, timestamp: Long): java.util.List[T]
+
+  // restores the state of the function from the provided list
+  restoreState(java.util.List[T] state): Unit
+  ```
+
+#### Using Connected Broadcast State
+
+- A common requirement in streaming applications is to distribute the same information to all parallel instances of a function and maintain it as recoverable state
+- Broadcast state can be combined with a regular **DataStream** or **KeyedStream**
+- Broadcasted events might not arrive in deterministic order
+
+#### Using the CheckpointedFunction Interface
+
+- `CheckpointedFunction` provides hooks to register and maintain keyed state and operator state and is the only interface that gives access to operator list union state
+
+#### Receiving Notifications About Completed Checkpoints
+
+- As discussed before, a checkpoint is only successful if all operator tasks successfully checkpointed their states to the checkpoint storage
+  - Only JobManager can determine whether a checkpoint is successful or not
+- Operators that need to be notified about completed checkpoints can implement the **CheckpointListener** interface
