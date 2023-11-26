@@ -125,4 +125,32 @@ env.enableCheckpointing(10000L)
   - By changing the data type of a state (Support)
   - By changing the type of a state primitive (Not support)
 
+### Queryable State
 
+- Flink features **queryable state** to address use cases that usually would require an external datastore to share data
+- In Flink, any keyed state can be exposed to external applications as queryable state and act as a read-only key-value store
+- Only key point queries are supported. It is not possible to request key ranges or even run more complex queries
+
+#### Architecture and Enabling Queryable State
+
+- Flink's queryable state service consists of 3 processes:
+  - `QueryableStateClient` used by an external application to submit queries and retrieve results
+  - `QueryableStateClientProxy` accepts and serves client requests
+    - Each TaskManager runs a client proxy
+  - `QueryableStateServer` serves the requests of a client proxy
+    - Each TaskManager runs a state server that fetches the state of a queried key from the local state backend and returns it to the requesting client proxy
+
+![](./arch_of_queryable_state_service.png)
+
+- In order to enable the queryable state service in a Flink setup, you need to add the **flink-queryable-state-runtime** JAR file to the classpath of the TaskManager process
+
+#### Exposing Queryable State
+
+- Define a function with keyed state and make the state queryable by calling the `setQueryable(String)` method on the StateDescriptor before obtaining the state handle
+- An application with a function that has a queryable state is executed just like any other application
+
+#### Querying State from External Applications
+
+- Any JVM-based application can query the queryable state of a running Flink application by using **QueryableStateClient**
+- By default, the client proxy listens on port 9067, but the port can be configured in the `./conf/flink-conf.yaml` file
+- Once you obtain a state client, you can query the state of an application by calling the `getKvState()` method
