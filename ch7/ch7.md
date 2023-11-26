@@ -47,3 +47,15 @@
 - As discussed before, a checkpoint is only successful if all operator tasks successfully checkpointed their states to the checkpoint storage
   - Only JobManager can determine whether a checkpoint is successful or not
 - Operators that need to be notified about completed checkpoints can implement the **CheckpointListener** interface
+
+### Enabling Failure Recovery for Stateful Application
+
+- Applications need to explicitly enable the periodic checkpointing mechanism via the StreamExecutionEnvironment
+
+```scala
+val env = StreamExecutionEnvironment.getExecutionEnvironment
+// set checkpointing interval to 10 seconds (10000 milliseconds)
+env.enableCheckpointing(10000L)
+```
+
+- A shorter checkpointing interval causes higher overhead during regular processing but can enable faster recovery because less data needs to be reprocessed
