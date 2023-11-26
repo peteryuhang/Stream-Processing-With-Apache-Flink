@@ -103,3 +103,26 @@ env.enableCheckpointing(10000L)
 
 - A common reason for growing state is keyed state on an evolving key domain
 - A solution for this problem is to remove the state of expired keys
+
+### Evolving Stateful Applications
+
+- A running application needs to be replaced by an updated version usually without losing the state of the application
+
+#### Updating an Application without Modifying Existing State
+
+- If an application is updated without removing or changing existing state, it is always savepoint compatible and can be started from a savepoint of an earlier version
+- If you add a new stateful operator to the application or a new state to an existing operator, the state will be initialized as empty when the application is started from a savepoint
+
+#### Removing State from an Application
+
+- When the new version of the application is started from a savepoint of the previous version, the savepoint contains state that cannot be mapped to the restarted application
+- By default, Flink will not start applications that do not restore all states that are contained in a savepoint to avoid losing the state in the savepoint
+  - It is possible to disable this safety check
+
+#### Modifying the State of an Operator
+
+- There are 2 ways state can be modified:
+  - By changing the data type of a state (Support)
+  - By changing the type of a state primitive (Not support)
+
+
