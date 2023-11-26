@@ -59,3 +59,18 @@ env.enableCheckpointing(10000L)
 ```
 
 - A shorter checkpointing interval causes higher overhead during regular processing but can enable faster recovery because less data needs to be reprocessed
+
+### Ensuring the Maintainability of Stateful Applications
+
+- It is important that application state can be migrated to a new version of the application or be redistributed to more or fewer operator tasks
+- Flink features savepoints to maintain applications and their states
+- It requires that all stateful operators of the initial version of an application specify two parameters to ensure the application can be properly maintained in the future
+
+#### Specifying Unique Operator Identifiers
+
+- Savepoint state can only be restored to an operator of a started application if their identifiers are identical
+
+#### Defining the Maximum Parallelism of Keyed State Operators
+
+- The maximum parallelism parameter of an operator defines the number of key groups into which the keyed state of the operator is split
+- The maximum parallelism can be set for all operators of an application via the **StreamExecutionEnvironment** or per operator using the `setMaxParallelism()` method
