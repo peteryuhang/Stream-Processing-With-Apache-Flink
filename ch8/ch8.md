@@ -31,7 +31,26 @@
 
 |          | Nonresettable source | Resettable source |
 | -------- | -------------------- | ----------------- |
-| Any sink | at-most-once         | at-least-once     | 
-| Idempotent sink | at-most-once  | exactly-once (temporary inconsistencies during recovery) | 
-| WAL sink | at-most-once         | at-least-once     | 
-| 2PC sink | at-most-once         | Exactly-once     | 
+| Any sink | at-most-once         | at-least-once     |
+| Idempotent sink | at-most-once  | exactly-once (temporary inconsistencies during recovery) |
+| WAL sink | at-most-once         | at-least-once     |
+| 2PC sink | at-most-once         | Exactly-once     |
+
+### Provided Connectors
+
+#### Apache Kafka Source Connector
+
+- Kafka organizes event streams as so-called topics
+- A topic is an event log that guarantees that events are read in the same order in which they were written
+- Flink provides source connectors for all common Kafka versions
+- eg. Creating a Flink Kafka source:
+```scala
+val properties = new Properties()
+properties.setProperty("bootstrap.servers", "localhost:9092")
+properties.setProperty("group.id", "test")
+val stream: DataStream[String] = env.addSource(
+  new FlinkKafkaConsumer[String](
+    "topic",                                // kafka topic to read from, can be single or a list of topics
+    new SimpleStringSchema(),               // deserialization strategy, Flink provide Apache Avro and text-based JSON encodings
+    properties))                            // configures the Kafka client
+```
