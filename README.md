@@ -25,3 +25,5 @@ Note of reading book - Stream Processing with Apache Flink
 
 
 [Ch8. Reading from and Writing to External Systems](./ch8/ch8.md)
+
+[Ch9. Setting Up Flink for Streaming Applications](./ch9/ch9.md)
