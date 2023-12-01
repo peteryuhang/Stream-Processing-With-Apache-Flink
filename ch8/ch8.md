@@ -54,3 +54,28 @@ val stream: DataStream[String] = env.addSource(
     new SimpleStringSchema(),               // deserialization strategy, Flink provide Apache Avro and text-based JSON encodings
     properties))                            // configures the Kafka client
 ```
+
+#### Apache Kafka Sink Connector
+
+- Flink provides sink connectors for all Kafka versions since 0.8
+- Flink provides a universal Kafka connector that works for all Kafka versions since 0.11
+- eg. Creating a Flink Kafka sink
+```scala
+val stream: DataStream[String] = ...
+val myProducer = new FlinkKafkaProducer[String](
+  "localhost:9092",                         // comma-separated string of Kafka broker addresses
+  "topic",                                  // the name of the topic to which the data is written
+  new SimpleStringSchema)                   // serialization schema: converts the input types of the sink into a byte array
+stream.addSink(myProducer)
+```
+
+##### At Least Once Guarantees for The Kafka Sink
+
+- The Kafka sink provides at-least-once guarantees under the following conditions
+  - Flink’s checkpointing is enabled and all sources of the application are resettable
+  - The sink connector throws an exception if a write does not succeed, causing the application to fail and recover (Can change the configuration to retry)
+  - The sink connector waits for Kafka to acknowledge in-flight records before completing its checkpoint
+
+##### Exactly Once Guarantees for The Kafka Sink
+
+- Kafka 0.11 introduced support for transactional writes. Due to this feature, Flink’s Kafka sink is also able to provide exactly-once output guarantees given that the sink and Kafka are properly configured
